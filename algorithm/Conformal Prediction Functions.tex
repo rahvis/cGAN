@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+
+\begin{document}
+
+\section*{Conformal Prediction Functions}
+
+\subsection*{Inductive Conformal Prediction (ICP)}
+\begin{algorithm}
+\caption{Compute ICP Conformity Scores}
+\begin{algorithmic}[1]
+\Function{ComputeICP}{$X$}
+    \State $mean\_val \gets \text{mean}(X, \text{axis}=0)$
+    \State \Return $\text{norm}(X - mean\_val, \text{axis}=1)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Mondrian Conformal Prediction}
+\begin{algorithm}
+\caption{Compute Mondrian Conformity Scores}
+\begin{algorithmic}[1]
+\Function{ComputeMondrian}{$X, labels$}
+    \State $unique\_classes \gets \text{unique}(labels)$
+    \State $scores \gets \text{zeros}(labels.\text{shape}[0])$
+    \ForAll{$cls \in unique\_classes$}
+        \State $class\_data \gets X[labels == cls]$
+        \State $mean\_val \gets \text{mean}(class\_data, \text{axis}=0)$
+        \State $scores[labels == cls] \gets \text{norm}(class\_data - mean\_val, \text{axis}=1)$
+    \EndFor
+    \State \Return $scores$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Cross-Conformal Prediction}
+\begin{algorithm}
+\caption{Compute Cross-Conformal Scores}
+\begin{algorithmic}[1]
+\Function{ComputeCrossConformal}{$X, labels, k=5$}
+    \State $folds \gets \text{array\_split}(\text{arange}(len(X)), k)$
+    \State $all\_scores \gets []$
+    \For{$i = 0$ \textbf{to} $k-1$}
+        \State $train\_idx \gets \bigcup_{j \neq i} folds[j]$
+        \State $calib\_idx \gets folds[i]$
+        \State $mean\_val \gets \text{mean}(X[train\_idx], \text{axis}=0)$
+        \State $scores \gets \text{norm}(X[calib\_idx] - mean\_val, \text{axis}=1)$
+        \State $all\_scores.\text{append}(scores)$
+    \EndFor
+    \State \Return $\text{concatenate}(all\_scores)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Venn-Abers Predictors}
+\begin{algorithm}
+\caption{Compute Venn-Abers Scores}
+\begin{algorithmic}[1]
+\Function{ComputeVennAbers}{$X, labels$}
+    \State $model \gets \text{IsotonicRegression}()$
+    \State $model.\text{fit}(X, labels)$
+    \State \Return $model.\text{predict}(X)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Compute Conformal Intervals}
+\begin{algorithm}
+\caption{Compute Conformal Prediction Intervals}
+\begin{algorithmic}[1]
+\Function{ComputeConformalIntervals}{$synthetic\_data, \alpha$}
+    \State $intervals \gets []$
+    \ForAll{$sample \in synthetic\_data$}
+        \State $lower\_bound \gets \text{percentile}(sample, \alpha \times 100)$
+        \State $upper\_bound \gets \text{percentile}(sample, (1 - \alpha) \times 100)$
+        \State $intervals.\text{append}((lower\_bound, upper\_bound))$
+    \EndFor
+    \State \Return $intervals$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\end{document}

@@ -1,0 +1,128 @@
+\documentclass{article}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+
+\begin{document}
+
+\title{Conformal GAN Model Pseudocode}
+\author{}
+\date{}
+\maketitle
+
+
+
+\begin{algorithm}[ht]
+\caption{Conformal GAN Training}
+\begin{algorithmic}[1]
+\STATE \textbf{Input:} Training data $\{ \mathbf{x}_i, y_i \}_{i=1}^n$, number of epochs $E$, batch size $B$, learning rates $\eta_D$, $\eta_G$, regularization parameters $\lambda$, $\mu$
+\STATE Initialize generator $G$ and discriminator $D$ with appropriate architectures
+\FOR{epoch = 1 to $E$}
+    \FOR{batch = 1 to $\frac{n}{B}$}
+        \STATE \textbf{Train Discriminator:}
+        \STATE Sample real batch $\{ \mathbf{x}_r, y_r \}$ from training data
+        \STATE Generate fake batch $\{ \mathbf{x}_f, y_f \}$ using $G$
+        \STATE Compute discriminator loss:
+        \[
+        L_D = L_{\text{real}} + L_{\text{fake}} - \lambda \cdot L_{\text{reg}}
+        \]
+        \STATE Update discriminator parameters using gradient descent with learning rate $\eta_D$
+        \STATE \textbf{Train Generator:}
+        \STATE Compute generator loss:
+        \[
+        L_G = L_{\text{gen}} + \mu \cdot L_{\text{conform}}
+        \]
+        \STATE Update generator parameters using gradient descent with learning rate $\eta_G$
+    \ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[ht]
+\caption{Discriminator and Generator Loss Computations}
+\begin{algorithmic}[1]
+\STATE \textbf{Discriminator Losses:}
+\STATE Real loss:
+\[
+L_{\text{real}} = -\mathbb{E}_{\mathbf{x}_r, y_r} [ \log D(\mathbf{x}_r, y_r) ]
+\]
+\STATE Fake loss:
+\[
+L_{\text{fake}} = -\mathbb{E}_{\mathbf{x}_f, y_f} [ \log (1 - D(\mathbf{x}_f, y_f)) ]
+\]
+\STATE Conformity Regularization Loss:
+\[
+L_{\text{reg}} = \frac{1}{B} \sum_{i=1}^B | \text{conf}(\mathbf{x}_{r,i}, y_{r,i}) - \text{conf}(\mathbf{x}_{f,i}, y_{f,i}) |
+\]
+\STATE \textbf{Generator Loss:}
+\STATE Generator adversarial loss:
+\[
+L_{\text{gen}} = -\mathbb{E}_{\mathbf{x}_f, y_f} [ \log D(\mathbf{x}_f, y_f) ]
+\]
+\STATE Conformity loss:
+\[
+L_{\text{conform}} = \frac{1}{B} \sum_{i=1}^B | \text{conf}(\mathbf{x}_{f,i}, y_{f,i}) - \text{target\_conf} |^2
+\]
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[ht]
+\caption{Conformity Score Functions}
+\begin{algorithmic}[1]
+\STATE \textbf{Inductive Conformal Prediction (ICP):}
+\STATE Compute conformity scores for a batch $\{ \mathbf{x}_b, y_b \}$:
+\[
+\text{conf}(\mathbf{x}_b, y_b) = \| \mathbf{x}_b - \bar{\mathbf{x}}_b \|_2
+\]
+where $\bar{\mathbf{x}}_b$ is the mean of $\mathbf{x}_b$.
+\STATE \textbf{Mondrian Conformal Prediction:}
+\STATE Compute conformity scores for each class:
+\[
+\text{conf}_c(\mathbf{x}_b) = \| \mathbf{x}_b - \bar{\mathbf{x}}_{b,c} \|_2
+\]
+where $\bar{\mathbf{x}}_{b,c}$ is the mean of $\mathbf{x}_b$ for class $c$.
+\STATE \textbf{Cross-Conformal Prediction:}
+\STATE Compute conformity scores using cross-validation:
+\STATE \textbf{For each fold $i$ in $k$-fold cross-validation:}
+\STATE \quad Define training and calibration sets based on fold $i$
+\STATE \quad Compute mean of training set: $\bar{\mathbf{x}}_i$
+\STATE \quad Compute conformity scores for calibration set:
+\[
+\text{conf}_i(\mathbf{x}_b) = \| \mathbf{x}_b - \bar{\mathbf{x}}_i \|_2
+\]
+\STATE \textbf{Venn-Abers Predictors:}
+\STATE Fit an Isotonic Regression model to the data:
+\[
+\hat{y} = \text{IsotonicRegression}(\mathbf{x}_b, y_b)
+\]
+\STATE Compute conformity scores:
+\[
+\text{conf}(\mathbf{x}_b, y_b) = \hat{y}
+\]
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[ht]
+\caption{Conformal Prediction Interval Computation}
+\begin{algorithmic}[1]
+\STATE \textbf{Input:} Synthetic data $\mathbf{X}_s$, significance level $\alpha$
+\STATE Compute non-conformity scores for synthetic data:
+\[
+\text{scores} = \text{compute\_conformity\_scores}(\mathbf{X}_s)
+\]
+\STATE Compute the $(1 - \alpha)$-quantile of the scores:
+\[
+q = \text{quantile}(\text{scores}, 1 - \alpha)
+\]
+\STATE Define prediction intervals for each synthetic sample:
+\[
+\text{interval}_i = [ \mathbf{x}_{s,i} - q, \mathbf{x}_{s,i} + q ]
+\]
+\STATE \textbf{Output:} List of prediction intervals
+\end{algorithmic}
+\end{algorithm}
+
+\end{document}
