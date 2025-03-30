@@ -39,6 +39,7 @@ Train both GAN and C-GAN models:
 
 ```bash
 python main.py --model both
+
 ```
 
 ## Example Output
