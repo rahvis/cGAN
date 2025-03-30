@@ -1,0 +1,28 @@
+# Ignore virtual environment folder
+venv/
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore logs
+*.log
+
+# Ignore configuration files for test coverage tools
+.coverage
+*.coveragerc
+
+# Ignore environment files
+.env
+*.env
+
+# Ignore PyCharm project files
+*.iml
