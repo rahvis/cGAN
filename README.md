@@ -33,20 +33,6 @@ pip install -r requirements.txt
 
 The model is trained on the Iris dataset, which consists of 150 samples from three species of Iris flowers. The dataset includes four features: sepal length, sepal width, petal length, and petal width.
 
-## Project structure 
-.
-├── data/
-│   ├── data_loader.py   # Script to load and preprocess the Iris dataset
-├── models/
-│   ├── gan.py           # Standard GAN model implementation
-│   ├── cgan.py          # C-GAN (Conformal GAN) model implementation
-├── utils/
-│   ├── metrics.py       # Functions to evaluate KS_mean, Wasserstein_mean, Downstream Accuracy
-├── main.py              # Main script to train and evaluate both models
-├── requirements.txt     # Python dependencies
-└── README.md            # Project documentation
-```
-
 ## How to Run
 
 Train both GAN and C-GAN models:
