@@ -14,7 +14,7 @@ This project involves:
    - **Downstream Accuracy**: Indicates how well a classifier trained on the synthetic data performs on real data.
 
 ## Requirements
-```
+```bash
 torch>=1.8.0
 numpy
 pandas
@@ -50,7 +50,7 @@ The model is trained on the Iris dataset, which consists of 150 samples from thr
 
 Train both GAN and C-GAN models:
 
-```
+```bash
 python main.py --model both
 ```
 
@@ -58,7 +58,7 @@ python main.py --model both
 
 After running the script with the --model both option, the following terminal output will be generated:
 
-```
+```bash
 (venv) rahul@MacBookAir cGAN % python main.py --model both
 2025-03-29 17:04:42,016 - INFO - Loading Iris dataset...
 2025-03-29 17:04:42,063 - INFO - Using device: mps
